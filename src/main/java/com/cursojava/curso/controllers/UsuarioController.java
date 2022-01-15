@@ -1,5 +1,6 @@
 package com.cursojava.curso.controllers;
 
+import com.cursojava.curso.dao.UsuarioDao;
 import com.cursojava.curso.models.Usuario;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
