@@ -2,10 +2,10 @@ package com.cursojava.curso.controllers;
 
 import com.cursojava.curso.dao.UsuarioDao;
 import com.cursojava.curso.models.Usuario;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,94 +13,38 @@ import java.util.List;
 @RestController
 public class UsuarioController {
 
-    @RequestMapping(value = "usuario/{id}")
-    public Usuario getUsuario(@PathVariable Long id) {
+    /* Autowired es buscar un objeto manejado (beans) que implementen
+    determinada interfaz para hacer referencia a él.
+    De esta manera no es neceario crear una instancia nueva del objeto cada vez
+    que se necesite */
+    @Autowired
+    private UsuarioDao usuarioDao;
 
-        Usuario usuario = new Usuario();
-
-        usuario.setId(id);
-        usuario.setNombre("Daniel");
-        usuario.setApellido("Noguera");
-        usuario.setEmail("noguera.daniel@gmail.com");
-        usuario.setTelefono("123456789");
-
-        return usuario;
-
-    }
-
-    @RequestMapping(value = "usuarios")
+    @RequestMapping(value = "api/usuarios", method = RequestMethod.GET) // RUTAS DE ACCESO DESDE EL FRONT
     public List<Usuario> getUsuarios() {
 
-        Usuario usuario = new Usuario();
-
-        usuario.setId(123l);
-        usuario.setNombre("Daniel");
-        usuario.setApellido("Noguera");
-        usuario.setEmail("noguera.daniel@gmail.com");
-        usuario.setTelefono("123456789");
-
-        Usuario usuario2 = new Usuario();
-
-        usuario2.setId(456l);
-        usuario2.setNombre("Mercedes");
-        usuario2.setApellido("Gutierrez");
-        usuario2.setEmail("mercedes@gmail.com");
-        usuario2.setTelefono("23456789");
-
-        Usuario usuario3 = new Usuario();
-
-        usuario3.setId(789l);
-        usuario3.setNombre("Marcio");
-        usuario3.setApellido("Marciano");
-        usuario3.setEmail("marciano@gmail.com");
-        usuario3.setTelefono("456789456");
-
-        List<Usuario> usuarios = new ArrayList<>();
-
-        usuarios.add(usuario);
-        usuarios.add(usuario2);
-        usuarios.add(usuario3);
-
-        return usuarios;
+        return usuarioDao.getUsuarios();
 
     }
 
-    @RequestMapping(value = "prueba1")
-    public Usuario editar() {
+    @RequestMapping(value = "api/usuarios", method = RequestMethod.POST)
+    public void registrarUsuario(@RequestBody Usuario usuario) {
 
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Daniel");
-        usuario.setApellido("Noguera");
-        usuario.setEmail("noguera.daniel@gmail.com");
-        usuario.setTelefono("123456789");
+        //Encriptamos la contraseña que envio el cliente para su registro:
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
+        String hash =  argon2.hash(1, 1024, 1, usuario.getPassword());
 
-        return usuario;
+        //Llamamos al set para modificar la contraseña con el hash creado
+        usuario.setPassword(hash);
 
-    }
-
-    @RequestMapping(value = "prueba2")
-    public Usuario eliminar() {
-
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Daniel");
-        usuario.setApellido("Noguera");
-        usuario.setEmail("noguera.daniel@gmail.com");
-        usuario.setTelefono("123456789");
-
-        return usuario;
+        usuarioDao.registrar(usuario);
 
     }
 
-    @RequestMapping(value = "prueba3")
-    public Usuario buscar() {
+    @RequestMapping(value = "api/usuarios/{id}", method = RequestMethod.DELETE)
+    public void eliminar(@PathVariable Long id) {
 
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Daniel");
-        usuario.setApellido("Noguera");
-        usuario.setEmail("noguera.daniel@gmail.com");
-        usuario.setTelefono("123456789");
-
-        return usuario;
+        usuarioDao.eliminar(id);
 
     }
 
