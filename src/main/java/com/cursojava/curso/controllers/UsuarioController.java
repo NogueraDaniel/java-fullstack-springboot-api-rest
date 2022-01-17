@@ -28,17 +28,24 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "api/usuarios", method = RequestMethod.POST)
-    public void registrarUsuario(@RequestBody Usuario usuario) {
+    public boolean registrarUsuario(@RequestBody Usuario usuario) {
+
+        //Verificamos que no este el usuario
+        if (usuarioDao.verificarEmail(usuario) != null) {
+
+            return false;
+        }
 
         //Encriptamos la contraseña que envio el cliente para su registro:
         Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
-        String hash =  argon2.hash(1, 1024, 1, usuario.getPassword());
+        String hash = argon2.hash(1, 1024, 1, usuario.getPassword());
 
         //Llamamos al set para modificar la contraseña con el hash creado
         usuario.setPassword(hash);
 
         usuarioDao.registrar(usuario);
 
+        return true;
     }
 
     @RequestMapping(value = "api/usuarios/{id}", method = RequestMethod.DELETE)

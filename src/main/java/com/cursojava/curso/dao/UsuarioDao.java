@@ -13,4 +13,6 @@ public interface UsuarioDao {
     public void registrar(Usuario usuario);
 
     public boolean verificarCredenciales(Usuario usuario);
+
+    public Usuario verificarEmail(Usuario usuario);
 }

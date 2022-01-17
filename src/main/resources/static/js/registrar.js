@@ -23,9 +23,19 @@ async function registrarUsuario() {
   const request = await fetch("api/usuarios", {
     method: "POST",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(datos),
   });
+
+  const respuesta = await request.json();
+
+  if (respuesta) {
+    alert("La cuenta fue creada exitosamente!");
+
+    window.location.href = "login.html";
+  } else {
+    alert(datos.email + " ya esta registrado");
+  }
 }
