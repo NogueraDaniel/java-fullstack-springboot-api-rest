@@ -2,6 +2,7 @@ package com.cursojava.curso.controllers;
 
 import com.cursojava.curso.dao.UsuarioDao;
 import com.cursojava.curso.models.Usuario;
+import com.cursojava.curso.utils.JWTUtil;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,18 @@ public class UsuarioController {
     @Autowired
     private UsuarioDao usuarioDao;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     @RequestMapping(value = "api/usuarios", method = RequestMethod.GET) // RUTAS DE ACCESO DESDE EL FRONT
-    public List<Usuario> getUsuarios() {
+    public List<Usuario> getUsuarios(@RequestHeader(value="Authorization") String token) {
+
+        String usuarioId = jwtUtil.getKey(token);
+
+        if (usuarioId == null) {
+
+            return new ArrayList<>();
+        }
 
         return usuarioDao.getUsuarios();
 

@@ -6,6 +6,7 @@ import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -21,7 +22,7 @@ public class UsuarioDaoImp implements UsuarioDao {
     public List<Usuario> getUsuarios() {
 
         String query = "FROM Usuario";
-        List <Usuario> usuarios = entityManager.createQuery(query).getResultList();
+        List<Usuario> usuarios = entityManager.createQuery(query).getResultList();
         return usuarios;
     }
 
@@ -35,18 +36,18 @@ public class UsuarioDaoImp implements UsuarioDao {
     @Override
     public void registrar(Usuario usuario) {
 
-       entityManager.merge(usuario);
+        entityManager.merge(usuario);
 
     }
 
     @Override
-    public boolean verificarCredenciales(Usuario usuario) {
+    public Usuario obtenerUsuarioPorCredenciales(Usuario usuario) {
 
         Usuario usuarioConsultado = verificarEmail(usuario);
 
-        if(usuario == null) {
+        if (usuarioConsultado == null) {
 
-            return false;
+            return null;
         }
 
         // Creo un argon para validar la contraseña:
@@ -57,7 +58,8 @@ public class UsuarioDaoImp implements UsuarioDao {
 
         //Uso la funcion de argon que matchea el password enviado desde el front
         //con el password encriptado que esta en la base de datos
-        return argon2.verify(passwordHashed, usuario.getPassword());
+        return argon2.verify(passwordHashed, usuario.getPassword()) ? usuarioConsultado : null;
+
     }
 
     @Override
