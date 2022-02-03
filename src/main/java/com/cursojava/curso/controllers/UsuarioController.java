@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class UsuarioController {
 
-    /* Autowired es buscar un objeto manejado (beans) que implementen
+    /* Autowired busca un objeto manejado (beans) que implemente
     determinada interfaz para hacer referencia a él.
     De esta manera no es neceario crear una instancia nueva del objeto cada vez
     que se necesite */
@@ -24,7 +24,7 @@ public class UsuarioController {
     @Autowired
     private JWTUtil jwtUtil;
 
-    @RequestMapping(value = "api/usuarios", method = RequestMethod.GET) // RUTAS DE ACCESO DESDE EL FRONT
+    @RequestMapping(value = "api/usuarios", method = RequestMethod.GET) // RUTA DE ACCESO DESDE EL FRONT
     public List<Usuario> getUsuarios(@RequestHeader(value="Authorization") String token) {
 
         String usuarioId = jwtUtil.getKey(token);

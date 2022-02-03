@@ -21,11 +21,12 @@ public class AuthController {
     @RequestMapping(value = "api/login", method = RequestMethod.POST)
     public String login(@RequestBody Usuario usuario) {
 
-        Usuario usuarioLogueado = usuarioDao.obtenerUsuarioPorCredenciales(usuario);
+        Usuario usuarioExistente = usuarioDao.obtenerUsuarioPorCredenciales(usuario);
 
-        if (usuarioLogueado != null) {
+        if (usuarioExistente != null) {
 
-            String tokenJwt = jwtUtil.create(String.valueOf(usuarioLogueado.getId()), usuarioLogueado.getEmail());
+            // Si el usuario existe, envio al front el token para la sesion:
+            String tokenJwt = jwtUtil.create(String.valueOf(usuarioExistente.getId()), usuarioExistente.getEmail());
 
             return tokenJwt;
         }
