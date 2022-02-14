@@ -2,7 +2,15 @@
 $(document).ready(function () {
   cargarUsuarios();
   $("#usuarios").DataTable();
+  actualizarEmailDelUsuario();
 });
+
+
+function actualizarEmailDelUsuario() {
+
+  document.getElementById("txt-email-usuario").outerHTML = localStorage.email;
+
+}
 
 async function cargarUsuarios() {
   //Funcion para hacer un request y obtener la lista de usuarios como json
@@ -16,8 +24,7 @@ async function cargarUsuarios() {
   const usuarios = await request.json();
   //
 
-  if(localStorage.token == undefined) {
-
+  if (localStorage.token == undefined) {
     window.location.href = "404.html";
   }
 
@@ -29,7 +36,9 @@ async function cargarUsuarios() {
       '<a href="#" onclick="eliminarUsuario(' +
       usuario.id +
       ')" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></a>';
+
     console.log(usuario);
+
     //Creamos una fila por cada usuario
     let usuarioHtml =
       "<tr><td>" +
@@ -55,12 +64,13 @@ async function cargarUsuarios() {
   //Dentro del cuerpo de la tabla ponemos el listado creado anteriormente
   document.querySelector("#usuarios tbody").outerHTML = listadoHtml;
 }
+
 function getHeaders() {
-    return {
-     'Accept': 'application/json',
-     'Content-Type': 'application/json',
-     'Authorization': localStorage.token
-   };
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: localStorage.token,
+  };
 }
 
 async function eliminarUsuario(id) {

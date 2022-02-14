@@ -16,7 +16,7 @@ public class UsuarioController {
 
     /* Autowired busca un objeto manejado (beans) que implemente
     determinada interfaz para hacer referencia a él.
-    De esta manera no es neceario crear una instancia nueva del objeto cada vez
+    De esta manera no es necesario crear una instancia nueva del objeto cada vez
     que se necesite */
     @Autowired
     private UsuarioDao usuarioDao;
@@ -27,12 +27,7 @@ public class UsuarioController {
     @RequestMapping(value = "api/usuarios", method = RequestMethod.GET) // RUTA DE ACCESO DESDE EL FRONT
     public List<Usuario> getUsuarios(@RequestHeader(value="Authorization") String token) {
 
-        String usuarioId = jwtUtil.getKey(token);
-
-        if (usuarioId == null) {
-
-            return new ArrayList<>();
-        }
+        if (!validarToken(token)) return null;
 
         return usuarioDao.getUsuarios();
 
@@ -60,9 +55,19 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "api/usuarios/{id}", method = RequestMethod.DELETE)
-    public void eliminar(@PathVariable Long id) {
+    public void eliminar(@RequestHeader(value="Authorization") String token, @PathVariable Long id) {
+
+        if (!validarToken(token)) return;
 
         usuarioDao.eliminar(id);
+
+    }
+
+    private boolean validarToken(String token) {
+
+        String usuarioId = jwtUtil.getKey(token);
+
+        return usuarioId != null;
 
     }
 
